@@ -10,6 +10,8 @@
 
 An osu! beatmap downloader that uses Chimu.moe API to download beatmaps from links stored in a text file and zips them afterwards. I made this because zipping mappools is a pain.
 
+## Getting Started <a name = "getting_started"></a>
+
 ### Prerequisites
 
 Python 3.8+
