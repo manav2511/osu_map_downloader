@@ -1,4 +1,4 @@
-# Project Title
+# osu! map downloader
 
 ## Table of Contents
 
