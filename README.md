@@ -28,7 +28,7 @@ Install dependencies
 
 ```
 cd osu_map_downloader
-pip3 install pipenv
+pip3 install --user pipenv
 pipenv install 
 pipenv run python3 map_dl.py -f example.txt -n example.zip
 ```
