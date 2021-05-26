@@ -14,7 +14,7 @@ An osu! beatmap downloader that uses Chimu.moe API to download beatmaps from lin
 
 ### Prerequisites
 
-Python 3.8+
+Python 3
 
 ### Installing
 
@@ -28,9 +28,8 @@ Install dependencies
 
 ```
 cd osu_map_downloader
-pip3 install --user pipenv
-pipenv install 
-pipenv run python3 map_dl.py -f example.txt -n example.zip
+pip install requests
+python map_dl.py -f example.txt -n example.zip
 ```
 
 ## Usage <a name = "usage"></a>
