@@ -26,16 +26,17 @@ Install dependencies
 
 ```
 cd osu_map_downloader
+pip3 install pipenv
 pipenv install 
-pipenv run map_dl.py -f example.txt -n example.zip
+pipenv run python3 map_dl.py -f example.txt -n example.zip
 ```
 
 ## Usage <a name = "usage"></a>
 
 ```
-usage: map_dl.py [-h] -f pool.txt -n example.zip [-o D:\match_pool\]
+map_dl.py [-h] -f example.txt -n example.zip [-o D:\match_pool\]
 
-Download beatmaps from a list of links.
+Download beatmaps from a list of links in a text file.
 
 optional arguments:
   -h, --help            show this help message and exit
