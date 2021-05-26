@@ -40,7 +40,7 @@ def add_to_zip(paths, name):
 # Argument parsing
 ap = argparse.ArgumentParser(description='Download beatmaps from a list of links.')
 
-ap.add_argument("-f", "--file", required=True, metavar="pool.txt",
+ap.add_argument("-f", "--file", required=True, metavar="example.txt",
    help="a text file containing beatmap links seperated by newline")
 ap.add_argument("-n", "--name", required=True, metavar="example.zip",
    help="the name of the zip file to be created")

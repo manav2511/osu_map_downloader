@@ -42,7 +42,7 @@ Download beatmaps from a list of links in a text file.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -f pool.txt, --file pool.txt
+  -f example.txt, --file example.txt
                         a text file containing beatmap links seperated by newline
   -n example.zip, --name example.zip
                         the name of the zip file to be created
