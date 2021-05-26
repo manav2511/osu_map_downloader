@@ -37,6 +37,8 @@ Example
 python map_dl.py -f example.txt -n example.zip
 ```
 
+See [example.txt](example.txt) to understand how to store the links.
+
 ## Usage <a name = "usage"></a>
 
 Basic usage
