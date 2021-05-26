@@ -29,13 +29,26 @@ Install dependencies
 ```
 cd osu_map_downloader
 pip install requests
+```
+
+Example 
+
+```
 python map_dl.py -f example.txt -n example.zip
 ```
 
 ## Usage <a name = "usage"></a>
 
+Basic usage
+
 ```
-map_dl.py [-h] -f example.txt -n example.zip [-o D:\match_pool\]
+python map_dl.py -f links.txt -n zipname.zip
+```
+
+Help
+
+```
+python map_dl.py [-h] -f example.txt -n example.zip [-o D:\match_pool\]
 
 Download beatmaps from a list of links in a text file.
 
