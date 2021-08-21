@@ -12,9 +12,9 @@ def download(ids, path):
 
         if r.status_code == 200:
             d = r.headers.get("Content-Disposition")
-            filename = requests.utils.unquote(re.findall("filename=\"(.+)\"", d)[0])
+            #filename = requests.utils.unquote(re.findall("filename=\"(.+)\"", d)[0])
 
-            filename = path + filename
+            filename = path + id + ".osz"
 
             with open(filename, "wb") as f:
                 f.write(r.content)
