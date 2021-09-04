@@ -4,6 +4,7 @@ import requests
 from zipfile import ZipFile
 import tempfile
 from os.path import basename
+<<<<<<< HEAD
 
 def download(ids, path, name):
     # use temp_dir if no path specified
@@ -51,6 +52,36 @@ def download(ids, path, name):
         if not success:
             print("Failed to download #{}! It probably does not exist on the mirrors.\n"
             "Please manually download the beatmap from osu.ppy.sh!".format(id))
+=======
+
+def download(ids, path, name):
+    # use temp_dir if no path specified
+    if len(path) == 0:
+        temp_dir = tempfile.TemporaryDirectory()
+        print("Using temporary directory {0}".format(temp_dir.name))
+        path = temp_dir.name + "\\"
+
+    dled = []
+    for id in ids:
+        url = "https://api.chimu.moe/v1/download/{0}?n=1".format(id)
+
+        r = requests.get(url, allow_redirects=True)  # to get only final redirect url
+
+        if r.status_code == 200:
+            d = r.headers.get("Content-Disposition")
+
+            filename = path + id + ".osz"
+
+            with open(filename, "wb") as f:
+                f.write(r.content)
+
+            dled.append(filename)
+
+            print("Downloaded #{}".format(id))
+        else:
+            print("Failed to download #{}! It probably does not exist on the mirror or some error ocurred.\n"
+            "Please manually download the beatmap!".format(id))
+>>>>>>> 80ac51a04b39e374f31847757c117ff1013dedd1
     
     print("Finished downloading!")
 
