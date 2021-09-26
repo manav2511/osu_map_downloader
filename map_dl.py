@@ -4,14 +4,39 @@ import requests
 from zipfile import ZipFile
 import tempfile
 from os.path import basename
-<<<<<<< HEAD
+from pathlib import Path
+
+def getIdsFromLinks(links):
+    ra = "(?<=beatmapsets\/)([0-9]*)(?=#|\n)" # matches format /beatmapsets/xxxxx#xxxxx or /beatmapsets/xxxxx
+    rb = "(.*\/b\/.*)" # matches format /b/xxxxx
+
+    ids = []
+
+    print("Gettings beatmapset IDs from links......")
+
+    for i in re.findall(ra, links):
+        ids.append(i)
+
+    for url in re.findall(rb, links):
+        try:
+            r = requests.head(url, allow_redirects=True, timeout=10)
+
+            ids.append(re.findall(ra, r.url)[0])
+        except:
+            print("{} is not a valid beatmap URL!".format(url))
+
+    return ids
 
 def download(ids, path, name):
     # use temp_dir if no path specified
     if len(path) == 0:
         temp_dir = tempfile.TemporaryDirectory()
         print("Using temporary directory {}".format(temp_dir.name))
-        path = temp_dir.name + "\\"
+        path = Path(temp_dir.name)
+    else:
+        path = Path(path)
+        
+        if not path.exists(): raise Exception("The specified path {} does not exist!".format(path)) 
 
     mirrors = { 
         "beatconnect.io": "https://beatconnect.io/b/{}",
@@ -25,7 +50,7 @@ def download(ids, path, name):
         # iterate through all available mirrors and try to download the beatmap
         for m in mirrors:
             url = mirrors[m].format(id)
-            print("Trying to download #{0} from {1}".format(id, m))
+            print("Trying to download #{0} from {1}. Press Ctrl + C if download gets stuck for too long.".format(id, m))
 
             timeout = False
             
@@ -36,52 +61,23 @@ def download(ids, path, name):
 
             # download the beatmap file
             if not timeout and r.status_code == 200:
-                filename = path + id + ".osz"
+                filename = path.joinpath(id + ".osz")           
 
                 with open(filename, "wb") as f:
                     f.write(r.content)
 
                 dled.append(filename)
 
-                print("Downloaded #{}".format(id))
-                success = True
+                if filename.exists():
+                    print("Downloaded #{}".format(id))
+                    success = True
 
                 break
         
-        # print fail message if none of the mirrors work
+        # print fail message if none of the mirrors work or if download didn't complete
         if not success:
             print("Failed to download #{}! It probably does not exist on the mirrors.\n"
             "Please manually download the beatmap from osu.ppy.sh!".format(id))
-=======
-
-def download(ids, path, name):
-    # use temp_dir if no path specified
-    if len(path) == 0:
-        temp_dir = tempfile.TemporaryDirectory()
-        print("Using temporary directory {0}".format(temp_dir.name))
-        path = temp_dir.name + "\\"
-
-    dled = []
-    for id in ids:
-        url = "https://api.chimu.moe/v1/download/{0}?n=1".format(id)
-
-        r = requests.get(url, allow_redirects=True)  # to get only final redirect url
-
-        if r.status_code == 200:
-            d = r.headers.get("Content-Disposition")
-
-            filename = path + id + ".osz"
-
-            with open(filename, "wb") as f:
-                f.write(r.content)
-
-            dled.append(filename)
-
-            print("Downloaded #{}".format(id))
-        else:
-            print("Failed to download #{}! It probably does not exist on the mirror or some error ocurred.\n"
-            "Please manually download the beatmap!".format(id))
->>>>>>> 80ac51a04b39e374f31847757c117ff1013dedd1
     
     print("Finished downloading!")
 
@@ -118,7 +114,7 @@ file = args["file"]
 with open(file) as f:
     links = f.read()
 
-ids = re.findall("(?<=beatmapsets\/)(.*)(?=#)", links)
+ids = getIdsFromLinks(links)
 
 #Start the download
 dled = download(ids, args["out"], args["name"])
