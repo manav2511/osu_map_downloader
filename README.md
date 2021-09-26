@@ -8,11 +8,7 @@
 
 ## About <a name = "about"></a>
 
-<<<<<<< HEAD
 An osu! beatmap downloader that uses Beatconnect.io and Chimu.moe mirrors to download beatmaps from links stored in a text file and zips them afterwards. I made this because zipping mappools is a pain.
-=======
-An osu! beatmap downloader that uses Chimu.moe API to download beatmaps from links stored in a text file and zips them afterwards. I made this because zipping mappools is a pain.
->>>>>>> 80ac51a04b39e374f31847757c117ff1013dedd1
 
 ## Getting Started <a name = "getting_started"></a>
 
@@ -65,13 +61,8 @@ optional arguments:
   -n example.zip, --name example.zip
                         the name of the zip file to be created
   -o D:\match_pool\, --out D:\match_pool\
-<<<<<<< HEAD
                         the directory where downloaded beatmaps are to be saved,
                         use this if you don't want the beatmaps to be deleted after zipping (make sure the folder exists)
-=======
-                        the directory where downloaded beatmaps are to be saved (make sure the
-                        folder exists)
->>>>>>> 80ac51a04b39e374f31847757c117ff1013dedd1
 ```
 
 
