@@ -29,6 +29,7 @@ Install dependencies
 ```
 cd osu_map_downloader
 pip install requests
+pip install wget (optional, only run this if you want progress bars)
 ```
 
 Example 
