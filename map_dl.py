@@ -1,5 +1,12 @@
 import re
 import argparse
+
+from wget import bar_thermometer
+try:
+    import wget
+    wg = True
+except:
+    wg = False
 import requests
 from zipfile import ZipFile
 import tempfile
@@ -12,7 +19,7 @@ def getIdsFromLinks(links):
 
     ids = []
 
-    print("Gettings beatmapset IDs from links......")
+    print("Gettings beatmapset IDs from links..............")
 
     for i in re.findall(ra, links):
         ids.append(i)
@@ -50,26 +57,30 @@ def download(ids, path, name):
         # iterate through all available mirrors and try to download the beatmap
         for m in mirrors:
             url = mirrors[m].format(id)
-            print("Trying to download #{0} from {1}. Press Ctrl + C if download gets stuck for too long.".format(id, m))
+            print("\nTrying to download #{0} from {1}. Press Ctrl + C if download gets stuck for too long.".format(id, m))
 
             timeout = False
             
             try:
-                r = requests.get(url, allow_redirects=True, timeout=10)  # to get only final redirect url
+                r = requests.head(url, allow_redirects=True, timeout=10)
             except:
                 timeout = True
 
             # download the beatmap file
             if not timeout and r.status_code == 200:
-                filename = path.joinpath(id + ".osz")           
+                filename = path.joinpath(id + ".osz")
 
-                with open(filename, "wb") as f:
-                    f.write(r.content)
+                if wg:
+                    wget.download(r.url, out=filename.as_posix())
+                else:
+                    r = requests.get(r.url)
+                    with open(filename, "wb") as f:
+                        f.write(r.content)
 
                 dled.append(filename)
 
                 if filename.exists():
-                    print("Downloaded #{}".format(id))
+                    print("\nDownloaded #{}".format(id))
                     success = True
 
                 break
@@ -79,7 +90,7 @@ def download(ids, path, name):
             print("Failed to download #{}! It probably does not exist on the mirrors.\n"
             "Please manually download the beatmap from osu.ppy.sh!".format(id))
     
-    print("Finished downloading!")
+    print("\nFinished downloading!")
 
     #Add all files to zip
     add_to_zip(dled, name)
