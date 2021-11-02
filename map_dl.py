@@ -31,6 +31,17 @@ def getIdsFromLinks(links):
             ids.append(re.findall(ra, r.url)[0])
         except:
             print("{} is not a valid beatmap URL!".format(url))
+    
+    if len(ids) == 0:
+        prefix = 'https://osu.ppy.sh/b/'
+        beatmap_ids = links.split('\n')
+        for beatmap_id in beatmap_ids:
+            url = prefix + beatmap_id
+            try:
+                r = requests.head(url, allow_redirects=True, timeout=10)
+                ids.append(re.findall(ra, r.url)[0])
+            except:
+                print("{} is not a valid beatmap URL!".format(url))
 
     return ids
 
