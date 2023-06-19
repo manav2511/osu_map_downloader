@@ -1,17 +1,12 @@
 import re
 import argparse
-
-from wget import bar_thermometer
-try:
-    import wget
-    wg = True
-except:
-    wg = False
-import requests
 from zipfile import ZipFile
 import tempfile
 from os.path import basename
 from pathlib import Path
+
+import requests
+from tqdm import tqdm
 
 def getIdsFromLinks(links):
     ra = "(?<=beatmapsets\/)([0-9]*)(?=#|\n)" # matches format /beatmapsets/xxxxx#xxxxx or /beatmapsets/xxxxx
@@ -56,10 +51,13 @@ def download(ids, path, name):
         
         if not path.exists(): raise Exception("The specified path {} does not exist!".format(path)) 
 
-    mirrors = { 
-        "beatconnect.io": "https://beatconnect.io/b/{}",
-        "chimu.moe": "https://api.chimu.moe/v1/download/{}?n=1"
+    mirrors = {
+        "chimu.moe": "https://api.chimu.moe/v1/download/{}?n=0",
+        "beatconnect.io": "https://beatconnect.io/b/{}"
         }
+
+    # tip for download getting stuck
+    print("\nPress Ctrl + C if download gets stuck for too long.")
 
     dled = []
     for id in ids:
@@ -68,30 +66,33 @@ def download(ids, path, name):
         # iterate through all available mirrors and try to download the beatmap
         for m in mirrors:
             url = mirrors[m].format(id)
-            print("\nTrying to download #{0} from {1}. Press Ctrl + C if download gets stuck for too long.".format(id, m))
+            print("\nTrying to download #{0} from {1}".format(id, m))
 
-            timeout = False
-            
-            try:
-                r = requests.head(url, allow_redirects=True, timeout=10)
-            except:
-                timeout = True
+            headers = {'User-Agent': 'Mozilla/5.0'}
 
             # download the beatmap file
-            if not timeout and r.status_code == 200:
-                filename = path.joinpath(id + ".osz")
+            name = id + ".osz"
+            filename = path.joinpath(name)
 
-                if wg:
-                    wget.download(r.url, out=filename.as_posix())
-                else:
-                    r = requests.get(r.url)
-                    with open(filename, "wb") as f:
-                        f.write(r.content)
+            resp = requests.get(url, stream=True, headers=headers)
+            if resp.status_code == 200:
+                total = int(resp.headers.get('content-length', 0))
+
+                with open(filename, 'wb') as file, tqdm(
+                    desc=name,
+                    total=total,
+                    unit='iB',
+                    unit_scale=True,
+                    unit_divisor=1024,
+                ) as bar:
+                    for data in resp.iter_content(chunk_size=1024):
+                        size = file.write(data)
+                        bar.update(size)
 
                 dled.append(filename)
 
                 if filename.exists():
-                    print("\nDownloaded #{}".format(id))
+                    print("Downloaded #{}".format(id))
                     success = True
 
                 break

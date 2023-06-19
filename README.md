@@ -18,18 +18,17 @@ Python 3
 
 ### Installing
 
-Clone the repository
+1) Clone the repository
 
 ```
 git clone https://github.com/manav2511/osu_map_downloader.git
 ```
 
-Install dependencies
+2) Install dependencies
 
 ```
 cd osu_map_downloader
-pip install requests
-pip install wget (optional, only run this if you want progress bars)
+pip install -r requirements.txt
 ```
 
 Example 
