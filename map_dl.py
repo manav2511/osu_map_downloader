@@ -46,58 +46,59 @@ async def getIdsFromLinks(links, session):
 
     ids = []
 
-    print("Gettings beatmapset IDs...")
+    print("Getting beatmapset IDs...")
 
     for i in re.findall(reg_beatmapset, links):
-        print(re.findall(reg_beatmapset, links))
         ids.append(i)
 
-    reg_beatmap_found = re.findall(reg_beatmap, links)
+    # reg_beatmap_found = re.findall(reg_beatmap, links)
 
-    if len(reg_beatmap_found) > 0:
-        for url in tqdm(reg_beatmap_found, unit='beatmaps', total=len(reg_beatmap_found)):
-            try:
-                r = requests.head(url, allow_redirects=True, timeout=10)
+    # if len(reg_beatmap_found) > 0:
+    #     for url in tqdm(reg_beatmap_found, unit='beatmaps', total=len(reg_beatmap_found)):
+    #         try:
+    #             r = requests.head(url, allow_redirects=True, timeout=10)
 
-                ids.append(re.findall(reg_beatmapset, r.url)[0])
-            except:
-                print("{} is not a valid beatmap URL!".format(url))
-    
-    if len(ids) == 0:
-        prefix = 'https://osu.ppy.sh/b/'
-        beatmap_ids = links.split('\n')
-        for beatmap_id in tqdm(beatmap_ids, unit='beatmaps', total=len(beatmap_ids)):
-            url = prefix + beatmap_id
-            try:
-                r = requests.head(url, allow_redirects=True, timeout=10)
-                ids.append(re.findall(reg_beatmapset, r.url)[0])
-            except Exception as e:
-                print(e)
-                print("{} is not a valid beatmap URL!".format(url))
-
-    # Async code has some seemingly random issues right now
-    # sema = asyncio.BoundedSemaphore(5)
-    # tasks = [get_status_code(url, session, sema) for url in reg_beatmap_found]
-    # responses = await tqdm.gather(*tasks, unit='beatmaps', total=len(tasks))
-    # for resp in responses:
-    #     if resp[0] == 200:
-    #         ids.append(re.findall(reg_beatmapset, resp[1])[0])
-    #     else:
-    #         print("{} is not a valid beatmap URL!".format(resp[1]))
+    #             ids.append(re.findall(reg_beatmapset, r.url)[0])
+    #         except:
+    #             print("{} is not a valid beatmap URL!".format(url))
     
     # if len(ids) == 0:
     #     prefix = 'https://osu.ppy.sh/b/'
     #     beatmap_ids = links.split('\n')
+    #     for beatmap_id in tqdm(beatmap_ids, unit='beatmaps', total=len(beatmap_ids)):
+    #         url = prefix + beatmap_id
+    #         try:
+    #             r = requests.head(url, allow_redirects=True, timeout=10)
+    #             ids.append(re.findall(reg_beatmapset, r.url)[0])
+    #         except Exception as e:
+    #             print(e)
+    #             print("{} is not a valid beatmap URL!".format(url))
 
-    #     print([prefix + id for id in beatmap_ids])
+    # Async code has some seemingly random issues right now
+    sema = asyncio.BoundedSemaphore(3)
 
-    #     tasks = [get_status_code(prefix + id, session, sema) for id in beatmap_ids]
-    #     responses = await tqdm.gather(*tasks, unit='beatmaps', total=len(tasks))
-    #     for resp in responses:
-    #         if resp[0] == 200:
-    #             ids.append(re.findall(reg_beatmapset, resp[1])[0])
-    #         else:
-    #             print("{} is not a valid beatmap URL!".format(resp[1]))
+    reg_beatmap_found = re.findall(reg_beatmap, links)
+
+    if len(reg_beatmap_found) > 0:
+        tasks = [get_status_code(url, session, sema) for url in reg_beatmap_found]
+        responses = await tqdm.gather(*tasks, unit='beatmaps', total=len(tasks))
+        for resp in responses:
+            if resp[0] == 200:
+                ids.append(re.findall(reg_beatmapset, resp[1])[0])
+            else:
+                print("{} is not a valid beatmap URL!".format(resp[1]))
+    
+    if len(ids) == 0:
+        prefix = 'https://osu.ppy.sh/b/'
+        beatmap_ids = links.split('\n')
+
+        tasks = [get_status_code(prefix + id, session, sema) for id in beatmap_ids]
+        responses = await tqdm.gather(*tasks, unit='beatmaps', total=len(tasks))
+        for resp in responses:
+            if resp[0] == 200:
+                ids.append(re.findall(reg_beatmapset, resp[1])[0])
+            else:
+                print("{} is not a valid beatmap URL!".format(resp[1]))
 
     return ids
 
