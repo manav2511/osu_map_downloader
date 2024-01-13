@@ -71,15 +71,15 @@ def download(ids, path, name):
             headers = {'User-Agent': 'Mozilla/5.0'}
 
             # download the beatmap file
-            name = id + ".osz"
-            filename = path.joinpath(name)
+            name_osz = id + ".osz"
+            filename = path.joinpath(name_osz)
 
             resp = requests.get(url, stream=True, headers=headers)
             if resp.status_code == 200:
                 total = int(resp.headers.get('content-length', 0))
 
                 with open(filename, 'wb') as file, tqdm(
-                    desc=name,
+                    desc=name_osz,
                     total=total,
                     unit='iB',
                     unit_scale=True,
